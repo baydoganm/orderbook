@@ -1,6 +1,6 @@
 __author__ = 'mehmet'
 
-import requests
+import requests,json
 import time
 import urllib
 
@@ -22,10 +22,13 @@ def get_btc_orderbook():
     url="https://www.btcturk.com/api/orderbook"
     try:
         response=requests.get(url)
-        return (True,response.json())
+        respJSON=response.json()
+        return (True,respJSON)
      #   return response.json()
-    except requests.exceptions.ConnectionError as e:
+    except requests.exceptions.ConnectionError:
         return (False,1)
+    except ValueError:
+        return (False,response.text)
 
 
 
