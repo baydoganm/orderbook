@@ -22,11 +22,9 @@ with open('data4.csv','wb') as f:
                        float(entData[1]['asks'][0][0]),float(entData[1]['asks'][0][1])]
             except KeyError:
                 relData=[ind,dt,tm,'?','?','?','?']
-        elif (entData[0]==False and entData[1]==1):
-            relData=[ind,dt,tm,'?','?','?','?']
         else:
             relData=[ind,dt,tm,'?','?','?','?']
-            print entData[1]
+
         writer.writerow(relData)
 	print "%s\n" % relData
         time.sleep(freq)

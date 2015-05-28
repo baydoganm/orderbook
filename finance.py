@@ -22,13 +22,12 @@ def get_btc_orderbook():
     url="https://www.btcturk.com/api/orderbook"
     try:
         response=requests.get(url)
-        respJSON=response.json()
-        return (True,respJSON)
-     #   return response.json()
+        if(response.status_code!=200):
+            return (False,1)
+        return (True,response.json())
     except requests.exceptions.ConnectionError:
         return (False,1)
-    except ValueError:
-        return (False,response.text)
+
 
 
 
