@@ -6,8 +6,8 @@ require(rpart.plot)
 require(gbm)
 require(randomForest)
 
-rawdata=fread('/home/baydogan/Research/TimeSeries/OrderBookDynamics/data2.csv')
-source('/home/baydogan/Research/TimeSeries/OrderBookDynamics/generate_features.R')
+rawdata=fread('data2.csv')
+source('generate_features.r')
 
 #transform to zoo object
 inputdata=zoo(rawdata[,-1,with=FALSE],order.by=rawdata$Index)
