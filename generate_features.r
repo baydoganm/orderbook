@@ -8,11 +8,11 @@ generate_features <-
 				 lagSize=NULL,	#lag size for each feature in ''timeSeriesData''
 				 forecastAhead=1,
 				 verbose=FALSE,
-				 nPeriods=7,	# aggregation level for aggregated figures
+				 perChanges=FALSE,
+         nPeriods=7,	# aggregation level for aggregated figures
 				 nFeatureType=10,
 				 maxFeatSize=100) {
 	
-
 	if(!is.zoo(timeSeriesData)){
 		noZooObject="Data object, timeSeriesData and/or dayInfo, should be of type zoo"
 		stop(noZooObject)
@@ -77,7 +77,7 @@ generate_features <-
 		return(NULL)
 		stop(notEnoughObs)
 	}
-	
+
 	# of feature types
 	nofFeatureType=ncol(which.features)
 	# number of instances in the feature matrix
@@ -85,12 +85,10 @@ generate_features <-
 	
 	# number of features in the feature matrix
 	nofCols=maxFeatSize # will be calculated based on the selection of feature types
-	
-	features=matrix(NA,nofRows,nofCols)
-	
-	windowSeries=suppressWarnings(window(timeSeriesData, start=perStart, end=perEnd))
-	nofVariables=ncol(windowSeries)
 	nofRowsFeature=nofDataPoints-max(lagSize)-forecastAhead+1
+  features=matrix(NA,nofRows,nofCols)
+  windowSeries=suppressWarnings(window(timeSeriesData, start=perStart, end=perEnd))
+	nofVariables=ncol(windowSeries)
 	nameInfo=NULL
 	#print(max(lagSize))
 	featureind=0
@@ -141,13 +139,15 @@ generate_features <-
 			}
 		}
 	}
-	
+
 	featureind=featureind+1
 	toForecast=windowSeries[-(1:(nofDataPoints-nofRowsFeature)),forecastVar]
+  #represent forecast variable as percent variation
+  pctoForecast=10000*(coredata(toForecast)[-1]/coredata(toForecast)[-length(toForecast)]-1)
 #	toForecast=windowSeries[-(1:(max(lagSize)+forecastAhead-1)),forecastVar]
-	features[1:length(toForecast),featureind]=toForecast
+	features[1:length(pctoForecast),featureind]=pctoForecast
 	#ind=which(!is.na(features[1,]))
-	feat=data.frame(features[1:nofRowsFeature,1:featureind])
+	feat=data.frame(features[1:nofRowsFeature-1,1:featureind])
 	names(feat)[1:(ncol(feat)-1)]=nameInfo
 	names(feat)[ncol(feat)]='actual'
 	#ind=which(is.na(feat),arr.ind=TRUE)
